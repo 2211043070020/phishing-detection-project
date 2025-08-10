@@ -15,12 +15,8 @@ Development Environment
 IDE: Visual Studio Code
 Browser: Google Chrome 136.0.7103.93
 
-Languages
-Python      ████████████████████ 60%
-JavaScript  ████████████░░░░░░░░ 25%
-HTML/CSS    ██████░░░░░░░░░░░░░░ 10%
-JSON        ██░░░░░░░░░░░░░░░░░░ 5%
-Python Libraries
+
+
 LibraryPurposenumpyNumerical computationspandasData manipulation & analysisscikit-learnML utilities & metricscatboostGradient boosting modelplotlyInteractive visualizationsmatplotlibStatistical plotting
 System Requirements
 Hardware
