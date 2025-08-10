@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Alert</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .alert-container {
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(255, 71, 87, 0.3);
+            text-align: center;
+            animation: alertSlideIn 0.5s ease-out;
+        }
+        
+        @keyframes alertSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .alert-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .alert-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .alert-message {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .alert-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .alert-button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 120px;
+        }
+        
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-info:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #2c2c2c;
+            color: white;
+            border: 2px solid #444;
+        }
+        
+        .btn-danger:hover {
+            background: #444;
+            transform: translateY(-2px);
+        }
+        
+        .warning-details {
+            font-size: 12px;
+            margin-top: 20px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        @media (max-width: 600px) {
+            .alert-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .alert-title {
+                font-size: 24px;
+            }
+            
+            .alert-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .alert-button {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="alert-container">
+        <div class="alert-icon">⚠️</div>
+        <h1 class="alert-title">Security Alert!</h1>
+        <div class="alert-message" id="alert-message">
+            This website has been flagged as a potential phishing attempt. Please verify its authenticity before entering any personal information.
+        </div>
+        
+        <div class="alert-buttons">
+            <button class="alert-button btn-info" id="more-info-btn">
+                More Info
+            </button>
+            <button class="alert-button btn-danger" id="proceed-btn">
+                I Understand, Proceed
+            </button>
+        </div>
+        
+        <div class="warning-details">
+            Powered by CatBoost ML Algorithm • 94.97% Accuracy
+        </div>
+    </div>
+
+    <script>
+        // Listen for messages from parent window
+        window.addEventListener('message', function(event) {
+            if (event.data.action === 'setMessage' && event.data.message) {
+                const messageElement = document.getElementById('alert-message');
+                if (messageElement) {
+                    messageElement.innerHTML = event.data.message.replace(/\n/g, '<br>');
+                }
+            }
+        });
+
+        // Handle button clicks
+        document.getElementById('more-info-btn').addEventListener('click', function() {
+            // Open extension popup for more details
+            try {
+                chrome.runtime.sendMessage({action: 'show_details'});
+                window.parent.postMessage({action: 'close_alert'}, '*');
+            } catch (error) {
+                console.error('Error opening details:', error);
+                // Fallback: just close the alert
+                closeAlert();
+            }
+        });
+
+        document.getElementById('proceed-btn').addEventListener('click', function() {
+            closeAlert();
+        });
+
+        function closeAlert() {
+            // Remove the alert iframe from parent page
+            window.parent.postMessage({action: 'close_alert'}, '*');
+            
+            // Also try to send message to content script
+            try {
+                chrome.runtime.sendMessage({action: 'removePopup'});
+            } catch (error) {
+                console.error('Error removing popup:', error);
+            }
+        }
+
+        // Handle escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAlert();
+            }
+        });
+
+        // Auto-focus for accessibility
+        document.getElementById('more-info-btn').focus();
+    </script>
+</body>
+</html>
