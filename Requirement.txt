@@ -1,0 +1,30 @@
+# Phishing Detection Extension - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core ML Libraries
+catboost==1.2.2
+scikit-learn==1.3.2
+numpy==1.24.3
+pandas==2.0.3
+
+# Data Processing
+liac-arff==2.5.0
+
+# Visualization (for model evaluation)
+matplotlib==3.7.2
+seaborn==0.12.2
+
+# Utilities
+scipy==1.11.1
+
+# Development and Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+
+# Jupyter (for experimentation)
+jupyter==1.0.0
+ipykernel==6.25.0
+
+# Optional: For advanced model analysis
+shap==0.42.1
+plotly==5.15.0
